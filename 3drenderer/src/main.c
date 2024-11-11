@@ -4,9 +4,11 @@
 
 #include "display.h"
 
-//====================================//
+//============ GLOBALS ===============//
+
 bool g_isRunning = true;
 
+//=====================================//
 
 // setup, process input, update, render
 
@@ -52,8 +54,9 @@ void render(void) {
 	SDL_SetRenderDrawColor(g_renderer, 69,69,69,255);
 	SDL_RenderClear(g_renderer);
 //..
-	drawRect(10,10,100,100,0xFF123456);
+	//drawRect(10,10,100,100,0xFF123456);
 	//drawGrid(0xFFFFFFFF);
+	drawPixel(30,30,0xFFFFFF00);
 
 //..	
 	renderColorBuffer();

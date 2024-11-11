@@ -67,13 +67,20 @@ void drawGrid(uint32_t color) {
 }
 
 // Draw a filled rectangle
-void drawRect(int x, int y, int width, int height, uint32_t color) {
+void drawRect(const int x, const int y, const int width, const int height, const uint32_t color) {
     for (int row = y; row < y + height; ++row)
         for (int col = x; col < x + width; ++col) {
             if (row >= 0 && row < g_windowHeight && col >= 0 && col < g_windowWidth) { 
                 g_colorBuffer[g_windowWidth * row + col] = color;
             }
         }
+}
+
+//Plot a pixel
+void drawPixel(const int x, const int y, const uint32_t color) {
+    if (x >= 0 && x < g_windowWidth && y >= 0 && y < g_windowHeight) {
+        g_colorBuffer[g_windowWidth * y + x] = color;
+    }
 }
 
 void renderColorBuffer(void) { //https://wiki.libsdl.org/SDL2/SDL_UpdateTexture
