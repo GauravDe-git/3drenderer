@@ -3,12 +3,17 @@
 #include <SDL.h>
 
 #include "display.h"
+#include "vector.h"
 
 //============ GLOBALS ===============//
 
 bool g_isRunning = true;
+float g_fovFactor = 128.f;
 
-//=====================================//
+// ** Declare a vec3 for a cube with 9x9x9 points
+#define N_POINTS (9 * 9 * 9)
+Vec3 g_cubePoints[N_POINTS]; // 9x9x9 Cube points
+Vec2 g_projectedPoints[N_POINTS];
 
 // setup, process input, update, render
 
@@ -28,7 +33,15 @@ void setup(void) {
 		g_windowWidth,
 		g_windowHeight
 		);
-	
+
+	int pointCount = 0;
+	// Start loading Array of points for the Cube
+	for (float x = -1; x <= 1; x += 0.25f)
+		for (float y = -1; y <= 1; y += 0.25f)
+			for (float z = -1; z <= 1; z += 0.25f) {
+				Vec3 newPoint = {.x = x, .y = y, .z = z};
+				g_cubePoints[pointCount++] = newPoint;
+			}
 }
 
 void processInput(void) {
@@ -46,19 +59,36 @@ void processInput(void) {
 	}
 }
 
+// ** Receives a 3D vector and returns a projected 2D point
+Vec2 project(const Vec3 point) {
+	const Vec2 projectedPoint = {
+	.x = point.x * g_fovFactor,
+	.y = point.y * g_fovFactor};
+	return projectedPoint;
+}
+
 void update(void) {
-	
+	for ( int i = 0; i < N_POINTS; ++i) {
+		Vec3 point = g_cubePoints[i];
+
+		// Project the current point
+		Vec2 projectedPoint = project(point);
+
+		// Save the projected 2D vector in the array of projected points
+		g_projectedPoints[i] = projectedPoint;
+	}
 }
 
 void render(void) {
-	SDL_SetRenderDrawColor(g_renderer, 69,69,69,255);
-	SDL_RenderClear(g_renderer);
-//..
-	//drawRect(10,10,100,100,0xFF123456);
-	//drawGrid(0xFFFFFFFF);
-	drawPixel(30,30,0xFFFFFF00);
+	// Loop all projected points and render them
+	for ( int i = 0; i < N_POINTS; ++i) {
+		Vec2 projectedPoint = g_projectedPoints[i];
+		drawRect((int)projectedPoint.x + (g_windowWidth / 2),
+			(int)projectedPoint.y + (g_windowHeight / 2),
+			4,4, 0xFFFF);
+	}
 
-//..	
+	
 	renderColorBuffer();
 	clearColorBuffer(0xFF000000);
 	

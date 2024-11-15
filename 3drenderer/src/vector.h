@@ -3,12 +3,12 @@
 typedef struct {
     float x;
     float y;
-} vec2_t;
+} Vec2;
 
 typedef struct {
     float x;
     float y;
     float z;
-} vec3_t;
+} Vec3;
 
 //TODO:  Functions to manipulate vector2d and 3d
