@@ -8,7 +8,9 @@
 //============ GLOBALS ===============//
 
 bool g_isRunning = true;
-float g_fovFactor = 128.f;
+float g_fovFactor = 640.f;
+Vec3 g_cameraPosition = {0.f,0.f,-5.f};
+Vec3 g_cubeRotation = {0.f,0.f,0.f};
 
 // ** Declare a vec3 for a cube with 9x9x9 points
 #define N_POINTS (9 * 9 * 9)
@@ -62,17 +64,27 @@ void processInput(void) {
 // ** Receives a 3D vector and returns a projected 2D point
 Vec2 project(const Vec3 point) {
 	const Vec2 projectedPoint = {
-	.x = point.x * g_fovFactor,
-	.y = point.y * g_fovFactor};
+	.x = (point.x * g_fovFactor) / point.z,
+	.y = (point.y * g_fovFactor) / point.z};
 	return projectedPoint;
 }
 
 void update(void) {
+	g_cubeRotation.x += 0.005f;
+	g_cubeRotation.y += 0.005f;
+	g_cubeRotation.z += 0.005f;
 	for ( int i = 0; i < N_POINTS; ++i) {
 		Vec3 point = g_cubePoints[i];
 
+		//Vec3 transformedPoint = vec3RotateX(point,g_cubeRotation.x);
+		Vec3 transformedPoint = vec3RotateY(point,g_cubeRotation.y);
+		//transformedPoint = vec3RotateZ(transformedPoint,g_cubeRotation.z);
+
+		// Translate the point away from the camera
+		transformedPoint.z -= g_cameraPosition.z;
+
 		// Project the current point
-		Vec2 projectedPoint = project(point);
+		Vec2 projectedPoint = project(transformedPoint);
 
 		// Save the projected 2D vector in the array of projected points
 		g_projectedPoints[i] = projectedPoint;
@@ -83,9 +95,10 @@ void render(void) {
 	// Loop all projected points and render them
 	for ( int i = 0; i < N_POINTS; ++i) {
 		Vec2 projectedPoint = g_projectedPoints[i];
+		
 		drawRect((int)projectedPoint.x + (g_windowWidth / 2),
 			(int)projectedPoint.y + (g_windowHeight / 2),
-			4,4, 0xFFFF);
+			4,4, 0xFFFF00);
 	}
 
 	
