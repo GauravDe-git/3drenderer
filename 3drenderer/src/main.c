@@ -8,6 +8,8 @@
 //============ GLOBALS ===============//
 
 bool g_isRunning = true;
+int g_previousFrameTime = 0;
+
 float g_fovFactor = 640.f;
 Vec3 g_cameraPosition = {0.f,0.f,-5.f};
 Vec3 g_cubeRotation = {0.f,0.f,0.f};
@@ -70,15 +72,30 @@ Vec2 project(const Vec3 point) {
 }
 
 void update(void) {
-	g_cubeRotation.x += 0.005f;
-	g_cubeRotation.y += 0.005f;
-	g_cubeRotation.z += 0.005f;
+	// [ A naive while loop ] Manually locking the frame time instead of using SDL_Delay()
+	// while (!SDL_TICKS_PASSED(SDL_GetTicks(),g_previousFrameTime + FRAME_TARGET_TIME)) 
+
+	// ** Instead use SDL_Delay() which wont waste CPU cycles in a while loop
+	// Wait some time until we reach the target frame time in milliseconds
+	const int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - g_previousFrameTime);
+
+	// only delay the execution if we are running too fast
+	if ( timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME ) {
+		SDL_Delay(timeToWait);
+	}
+	
+	g_previousFrameTime = (int)SDL_GetTicks();
+	
+	g_cubeRotation.x += 0.01f;
+	g_cubeRotation.y += 0.01f;
+	g_cubeRotation.z += 0.01f;
+	
 	for ( int i = 0; i < N_POINTS; ++i) {
 		Vec3 point = g_cubePoints[i];
 
-		//Vec3 transformedPoint = vec3RotateX(point,g_cubeRotation.x);
-		Vec3 transformedPoint = vec3RotateY(point,g_cubeRotation.y);
-		//transformedPoint = vec3RotateZ(transformedPoint,g_cubeRotation.z);
+		Vec3 transformedPoint = vec3RotateX(point,g_cubeRotation.x);
+		transformedPoint = vec3RotateY(transformedPoint,g_cubeRotation.y);
+		transformedPoint = vec3RotateZ(transformedPoint,g_cubeRotation.z);
 
 		// Translate the point away from the camera
 		transformedPoint.z -= g_cameraPosition.z;
