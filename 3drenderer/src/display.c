@@ -21,8 +21,8 @@ bool initializeWindow(void) {
     SDL_DisplayMode displayMode;
     SDL_GetCurrentDisplayMode(0,&displayMode);
 	
-    g_windowWidth = displayMode.w;
-    g_windowHeight = displayMode.h;
+    g_windowWidth = 800;//displayMode.w;
+    g_windowHeight = 600;//displayMode.h;
 
     // Create SDL Window
     g_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -40,7 +40,7 @@ bool initializeWindow(void) {
     }
 
     // Set it to actual full-screen instead of fake borderless fullscreen?
-    SDL_SetWindowFullscreen(g_window,SDL_WINDOW_FULLSCREEN);
+    // SDL_SetWindowFullscreen(g_window,SDL_WINDOW_FULLSCREEN);
 	
     return true;
 }
